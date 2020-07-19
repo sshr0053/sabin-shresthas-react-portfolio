@@ -154,13 +154,14 @@ export default class PortfolioForm extends Component {
                         />
                     </div>
 
-                    <div className="img-uploaders three-column">
+                    <div className="img-uploaders">
                         <DropzoneComponent
                           ref={this.thumbRef}
                           config={this.componentConfig()}
                           djsConfig={this.djsConfig()}
                           eventHandlers={this.handleThumbDrop()}
                         >
+                            <div className="dz-message">Thumbnail</div>
                         </DropzoneComponent>  
 
                         <DropzoneComponent
@@ -169,6 +170,7 @@ export default class PortfolioForm extends Component {
                           djsConfig={this.djsConfig()}
                           eventHandlers={this.handleThumbDrop()}
                         >
+                            <div className="dz-message">Banner</div>
                         </DropzoneComponent>  
 
                         <DropzoneComponent 
@@ -177,11 +179,14 @@ export default class PortfolioForm extends Component {
                           djsConfig={this.djsConfig()}
                           eventHandlers={this.handleThumbDrop()}
                         >
+                            <div className="dz-message">Logo</div>
                         </DropzoneComponent>    
                     </div>
 
                     <div>
-                        <button type="submit">Save</button>
+                        <button className="btn" type="submit">
+                            Save
+                        </button>
                     </div>
                 </form>
         );
