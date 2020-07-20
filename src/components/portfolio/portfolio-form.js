@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import DropzoneComponent from 'react-dropzone-component';
 
-import "../../../node_modules/react-dropzone-component/styles/filepicker.css"
+import "../../../node_modules/react-dropzone-component/styles/filepicker.css";
 import "../../../node_modules/dropzone/dist/min/dropzone.min.css";
-
 
 export default class PortfolioForm extends Component {
     constructor(props) {
@@ -18,7 +17,10 @@ export default class PortfolioForm extends Component {
             url: "",
             thumb_image: "",
             banner_image: "",
-            logo: ""
+            logo: "",
+            editMode: false,
+            apiUrl: "https://sabinshrestha.devcamp.space/portfolio/portfolio_items",
+            apiAction: "post"
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -26,15 +28,59 @@ export default class PortfolioForm extends Component {
         this.componentConfig = this.componentConfig.bind(this);
         this.djsConfig = this.djsConfig.bind(this);
         this.handleThumbDrop = this.handleThumbDrop.bind(this);
+        this.handleBannerDrop = this.handleBannerDrop.bind(this);
+        this.handleLogoDrop = this.handleLogoDrop.bind(this);
 
         this.thumbRef = React.createRef();
         this.bannerRef = React.createRef();
         this.logoRef = React.createRef();
     }
 
+    componentDidUpdate() {
+        if (Object.keys(this.props.portfolioToEdit).length > 0) {
+            const {
+                id, 
+                name, 
+                description, 
+                category,
+                position, 
+                url, 
+                thumb_image_url, 
+                banner_image_url, 
+                logo_url 
+            } = this.props.portfolioToEdit;
+
+            this.props.clearPortfolioToEdit();
+
+            this.setState ({
+                id: id,
+                name: name || "",
+                description: description || "",
+                category: category || "Project",
+                position: position || "",
+                url: url || "",
+                editMode: true,
+                apiUrl: `https://sabinshrestha.devcamp.space/portfolio/portfolio_items/${id}`,
+                apiAction: "patch"
+            });
+        }
+    }
+
     handleThumbDrop() {
         return {
             addedfile: file => this.setState({ thumb_image: file })
+        };
+    }
+
+    handleBannerDrop() {
+        return {
+            addedfile: file => this.setState({ banner_image: file })
+        };
+    }
+
+    handleLogoDrop() {
+        return {
+            addedfile: file => this.setState({ logo: file })
         };
     }
 
@@ -76,10 +122,17 @@ export default class PortfolioForm extends Component {
     }
 
     handleSubmit(event) {
-        axios.post("https://sabinshrestha.devcamp.space/portfolio/portfolio_items", 
-        this.buildForm(), { withCredentials: true }
-        ).then(response => {
-            this.props.handleSuccessfulFormSubmission(response.data.portfolio_item);
+        axios({
+            method: this.state.apiAction,
+            url: this.state.apiUrl,
+            data: this.buildForm(),
+            withCredentials: true
+        }).then(response => {
+            if (this.state.editMode) {
+                this.props.handleEditFormSubmission();
+            } else {
+                this.props.handleNewFormSubmission(response.data.portfolio_item);
+            }
 
             this.setState({
                 name: "",
@@ -89,7 +142,10 @@ export default class PortfolioForm extends Component {
                 url: "",
                 thumb_image: "",
                 banner_image: "",
-                logo: ""
+                logo: "",
+                editMode: false,
+                apiUrl: "https://sabinshrestha.devcamp.space/portfolio/portfolio_items",
+                apiAction: "post"
             });
 
 
