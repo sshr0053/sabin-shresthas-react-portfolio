@@ -30,7 +30,6 @@ export default class PortfolioForm extends Component {
         this.handleThumbDrop = this.handleThumbDrop.bind(this);
         this.handleBannerDrop = this.handleBannerDrop.bind(this);
         this.handleLogoDrop = this.handleLogoDrop.bind(this);
-        this.handleLogoDrop = this.handleLogoDrop.bind(this);
         this.deleteImage = this.deleteImage.bind(this);
 
         this.thumbRef = React.createRef();
